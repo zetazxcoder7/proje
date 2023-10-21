@@ -1,6 +1,7 @@
 import requests
 import json
 import datetime
+import re
 
 def hora(data):
     dt = datetime.datetime.fromisoformat(data)
@@ -39,6 +40,7 @@ def jogos():
     response = json.loads(response.text)
     games = response['games']
 
+    games_str = []
     for game in games:
         if game['sportId'] == 1:
             id = game['id']
@@ -50,6 +52,22 @@ def jogos():
                 timeCasa = game['homeCompetitor']['name']
                 timeFora = game['awayCompetitor']['name']
                 comp = game['competitionDisplayName']
-                print(f"{diajogo} - {timeCasa} x {timeFora} - {comp} - {trans['transmissao']}")
+                sla = json.dumps({
+                    "id": id,
+                    "home": timeCasa,
+                    "away": timeFora,
+                    "slogan": f"{timeCasa} x {timeFora}",
+                    "camp": comp,
+                    "transmissao": trans,
+                    "data": diajogo
+                })
+                games_str.append(sla)
 
-jogos()
+    games = [json.loads(game_str) for game_str in games_str]
+    games = [game for game in games if not (game["camp"] == "MLS" and "Inter Miami" not in game["slogan"])]
+    
+    return games
+        
+
+
+
