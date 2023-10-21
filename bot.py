@@ -107,7 +107,7 @@ def formatar_jogos():
     print(resposta)
 
 
-schedule.every().day.at("03:06").do(formatar_jogos)
+schedule.every().day.at("03:01").do(formatar_jogos)
 
 while True:
     schedule.run_pending()
